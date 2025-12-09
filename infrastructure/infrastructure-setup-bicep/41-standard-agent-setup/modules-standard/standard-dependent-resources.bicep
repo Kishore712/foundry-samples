@@ -35,7 +35,7 @@ resource existingCosmosDB 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' exi
 }
 
 var canaryRegions = ['eastus2euap', 'centraluseuap']
-var cosmosDbRegion = contains(canaryRegions, location) ? (location == 'centraluseuap' ? 'westus2' : 'westus') : location
+var cosmosDbRegion = contains(canaryRegions, location) ? 'westus' : location
 resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' = if(!cosmosDBExists) {
   name: cosmosDBName
   location: cosmosDbRegion
@@ -65,7 +65,7 @@ resource existingSearchService 'Microsoft.Search/searchServices@2024-06-01-previ
   name: acsParts[8]
   scope: resourceGroup(acsParts[2], acsParts[4])
 }
-var aiSearchRegion = contains(canaryRegions, location) ? (location == 'centraluseuap' ? 'westus2' : 'westus') : location
+var aiSearchRegion = contains(canaryRegions, location) ? 'westus' : location
 resource aiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' = if(!aiSearchExists) {
   name: aiSearchName
   location: aiSearchRegion

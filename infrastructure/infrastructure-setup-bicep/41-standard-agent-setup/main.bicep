@@ -85,7 +85,7 @@ var azureStorageName = toLower('${uniqueSuffix}storage')
 
 // Handle region mapping for centraluseuap
 var canaryRegions = ['eastus2euap', 'centraluseuap']
-var mappedLocation = contains(canaryRegions, location) ? (location == 'centraluseuap' ? 'westus2' : 'westus') : location
+var mappedLocation = contains(canaryRegions, location) ? 'westus' : location
 
 // Check if existing resources have been passed in
 var storagePassedIn = azureStorageAccountResourceId != ''
