@@ -15,6 +15,7 @@
       "allowedValues": [
         "australiaeast",
         "canadaeast",
+        "centraluseuap",
         "eastus",
         "eastus2",
         "francecentral",
@@ -147,6 +148,8 @@
     "cosmosDBName": "[toLower(format('{0}cosmosdb', variables('uniqueSuffix')))]",
     "aiSearchName": "[toLower(format('{0}search', variables('uniqueSuffix')))]",
     "azureStorageName": "[toLower(format('{0}storage', variables('uniqueSuffix')))]",
+    "canaryRegions": ["eastus2euap", "centraluseuap"],
+    "mappedLocation": "[if(contains(variables('canaryRegions'), parameters('location')), if(equals(parameters('location'), 'centraluseuap'), 'westus2', 'westus'), parameters('location'))]",
     "storagePassedIn": "[not(equals(parameters('azureStorageAccountResourceId'), ''))]",
     "searchPassedIn": "[not(equals(parameters('aiSearchResourceId'), ''))]",
     "cosmosPassedIn": "[not(equals(parameters('azureCosmosDBAccountResourceId'), ''))]",
@@ -278,7 +281,7 @@
         "mode": "Incremental",
         "parameters": {
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[variables('mappedLocation')]"
           },
           "azureStorageName": {
             "value": "[variables('azureStorageName')]"
