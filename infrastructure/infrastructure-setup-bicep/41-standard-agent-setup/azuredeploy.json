@@ -413,7 +413,7 @@
                 "enableFreeTier": false,
                 "locations": [
                   {
-                    "locationName": "[parameters('location')]",
+                    "locationName": "[variables('cosmosDbRegion')]",
                     "failoverPriority": 0,
                     "isZoneRedundant": false
                   }
