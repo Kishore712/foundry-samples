@@ -83,6 +83,10 @@ var cosmosDBName = toLower('${uniqueSuffix}cosmosdb')
 var aiSearchName = toLower('${uniqueSuffix}search')
 var azureStorageName = toLower('${uniqueSuffix}storage')
 
+// Handle region mapping for centraluseuap
+var canaryRegions = ['eastus2euap', 'centraluseuap']
+var mappedLocation = contains(canaryRegions, location) ? (location == 'centraluseuap' ? 'westus2' : 'westus') : location
+
 // Check if existing resources have been passed in
 var storagePassedIn = azureStorageAccountResourceId != ''
 var searchPassedIn = aiSearchResourceId != ''
@@ -119,7 +123,7 @@ module validateExistingResources 'modules-standard/validate-existing-resources.b
 module aiDependencies 'modules-standard/standard-dependent-resources.bicep' = {
   name: 'dependencies-${accountName}-${uniqueSuffix}-deployment'
   params: {
-    location: location
+    location: mappedLocation
     azureStorageName: azureStorageName
     aiSearchName: aiSearchName
     cosmosDBName: cosmosDBName
@@ -145,7 +149,7 @@ module aiAccount 'modules-standard/ai-account-identity.bicep' = {
   name: 'ai-${accountName}-${uniqueSuffix}-deployment'
   params: {
     accountName: accountName
-    location: location
+    location: mappedLocation
     modelName: modelName
     modelFormat: modelFormat
     modelVersion: modelVersion
@@ -166,7 +170,7 @@ module aiProject 'modules-standard/ai-project-identity.bicep' = {
     projectName: projectName
     projectDescription: projectDescription
     displayName: displayName
-    location: location
+    location: mappedLocation
 
     aiSearchName: aiDependencies.outputs.aiSearchName
     aiSearchServiceResourceGroupName: aiDependencies.outputs.aiSearchServiceResourceGroupName
