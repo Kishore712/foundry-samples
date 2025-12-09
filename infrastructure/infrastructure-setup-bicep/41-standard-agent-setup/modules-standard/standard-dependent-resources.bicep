@@ -35,7 +35,7 @@ resource existingCosmosDB 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' exi
 }
 
 var canaryRegions = ['eastus2euap', 'centraluseuap']
-var cosmosDbRegion = contains(canaryRegions, location) ? 'westus' : location
+var cosmosDbRegion = contains(canaryRegions, location) ? (location == 'centraluseuap' ? 'westus2' : 'westus') : location
 resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' = if(!cosmosDBExists) {
   name: cosmosDBName
   location: cosmosDbRegion
@@ -50,7 +50,7 @@ resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' = if(!cosmo
     enableFreeTier: false
     locations: [
       {
-        locationName: location
+        locationName: cosmosDbRegion
         failoverPriority: 0
         isZoneRedundant: false
       }
@@ -65,9 +65,10 @@ resource existingSearchService 'Microsoft.Search/searchServices@2024-06-01-previ
   name: acsParts[8]
   scope: resourceGroup(acsParts[2], acsParts[4])
 }
+var aiSearchRegion = contains(canaryRegions, location) ? (location == 'centraluseuap' ? 'westus2' : 'westus') : location
 resource aiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' = if(!aiSearchExists) {
   name: aiSearchName
-  location: location
+  location: aiSearchRegion
   identity: {
     type: 'SystemAssigned'
   }
@@ -95,15 +96,17 @@ resource existingAzureStorageAccount 'Microsoft.Storage/storageAccounts@2023-05-
   scope: resourceGroup(azureStorageParts[2], azureStorageParts[4])
 }
 
+var storageRegion = contains(canaryRegions, location) ? (location == 'centraluseuap' ? 'westus2' : 'westus') : location
+
 // Some regions doesn't support Standard Zone-Redundant storage, need to use Geo-redundant storage
-param noZRSRegions array = ['southindia', 'westus']
-param sku object = contains(noZRSRegions, location) ? { name: 'Standard_GRS' } : { name: 'Standard_ZRS' }
+var noZRSRegions = ['southindia', 'westus']
+var storageSku = contains(noZRSRegions, storageRegion) ? { name: 'Standard_GRS' } : { name: 'Standard_ZRS' }
 
 resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' = if(!azureStorageExists) {
   name: azureStorageName
-  location: location
+  location: storageRegion
   kind: 'StorageV2'
-  sku: sku
+  sku: storageSku
   properties: {
     minimumTlsVersion: 'TLS1_2'
     allowBlobPublicAccess: false

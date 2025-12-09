@@ -3,6 +3,7 @@
 @allowed([
   'australiaeast'
   'canadaeast'
+  'centraluseuap'
   'eastus'
   'eastus2'
   'francecentral'
